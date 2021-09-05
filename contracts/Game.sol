@@ -74,12 +74,17 @@ contract Game {
         uint8 choicePlayerOne = playerChoices[matches[_gameId].playerOne][_gameId];
         uint8 choicePlayerTwo = playerChoices[matches[_gameId].playerTwo][_gameId];
 
-        require(choicePlayerOne != 0 && choicePlayerTwo != 0);
+        require(choicePlayerTwo != 0, "Falta la eleccion del jugador 2");
+        require(matches[_gameId].wasTransfered == false 
+        && matches[_gameId].winner != 0,
+         "El premio ya fue transferido");
 
-        if (choicePlayerOne == choicePlayerTwo) {
-            matches[_gameId].winner = 3;
-        }
+        
         //empate
+        if (choicePlayerOne == choicePlayerTwo) {
+            matches[_gameId].winner = 250;
+        }
+        
         if (choicePlayerOne == ROCK && choicePlayerTwo == PAPER) {
             matches[_gameId].winner = 2;
         } else if (choicePlayerTwo == ROCK && choicePlayerOne == PAPER) {
@@ -95,7 +100,7 @@ contract Game {
         }
         _transferPrize(_gameId);
     }
-    
+
     //Si pasó más de un minuto, se puede retirar el ether apostado
     function returnBet(uint _gameId) external {
         require(msg.sender == matches[_gameId].playerOne);
